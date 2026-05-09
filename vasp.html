@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VASP | Anigma</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="Anigma home">
+      <img src="anigma_logo.jpg" alt="Anigma logo" />
+    </a>
+
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="index.html#products">Products</a>
+      <a class="login-link" href="index.html#login">Login</a>
+    </nav>
+  </header>
+
+  <main class="tool-page">
+    <section class="tool-hero">
+      <p class="eyebrow">VASP</p>
+      <h1>Shape every video with intelligent editing support.</h1>
+      <p>
+        Upload your media, add a caption, and get a ready reel video made for
+        fast, polished sharing.
+      </p>
+    </section>
+
+    <section class="tool-panel">
+      <form class="tool-form" id="vaspForm">
+        <label>
+          Instruction
+          <textarea id="vaspInstruction" placeholder="Example: Make this reel energetic, short, and suitable for Instagram." required></textarea>
+        </label>
+
+        <label>
+          Media
+          <input id="vaspMedia" type="file" required />
+        </label>
+
+        <label>
+          Caption
+          <input id="vaspCaption" type="text" placeholder="Example: Turning simple clips into standout reels" required />
+        </label>
+
+        <button type="submit">Create Reel</button>
+      </form>
+
+      <aside class="result-box hidden" id="vaspResult"></aside>
+    </section>
+  </main>
+
+  <script src="tool-pages.js"></script>
+</body>
+</html>

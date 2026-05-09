@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anigma</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Anigma home">
+      <img src="anigma_logo.jpg" alt="Anigma logo" />
+    </a>
+
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="#products">Products</a>
+      <a class="login-link" href="#login" id="navLogin">Login</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero-section">
+      <div class="hero-copy">
+        <p class="eyebrow">Create with intelligence</p>
+        <h1>Turning Vision into Intelligent Reality with Anigma</h1>
+        <p class="hero-text">
+          Build, explore, and launch AI-powered ideas with Anigma's growing product suite.
+        </p>
+
+        <div class="hero-actions">
+          <a class="primary-button" href="#login">Get Started</a>
+        </div>
+      </div>
+
+      <section class="slider" aria-label="Featured Anigma products">
+        <button class="slider-button prev" type="button" aria-label="Previous product">&#10094;</button>
+
+        <a class="slide active" href="vasp.html">
+          <span class="product-label">Featured Product</span>
+          <h2>VASP</h2>
+          <p>An intelligent video editor built to make creation faster, sharper, and more effortless.</p>
+        </a>
+
+        <a class="slide" href="rubereye.html">
+          <span class="product-label">Featured Product</span>
+          <h2>Rubereye</h2>
+          <p>A smart image classifier that helps detect whether visuals are AI-generated or real.</p>
+        </a>
+
+        <div class="slide">
+          <span class="product-label">Featured Product</span>
+          <h2>Chanakya</h2>
+          <p>A focused language model designed for reasoning, answers, and intelligent assistance.</p>
+        </div>
+
+        <button class="slider-button next" type="button" aria-label="Next product">&#10095;</button>
+      </section>
+    </section>
+
+    <section id="products" class="products-section">
+      <div class="section-title">
+        <p class="eyebrow">Products</p>
+        <h2>Explore Anigma tools</h2>
+      </div>
+
+      <div class="product-grid">
+        <a class="product-card" href="vasp.html">
+          <h3>VASP</h3>
+          <p>An intelligent video editor for faster cuts, cleaner edits, and smoother creative workflows.</p>
+        </a>
+
+        <a class="product-card" href="rubereye.html">
+          <h3>Rubereye</h3>
+          <p>Classifies images as AI-generated or real with clear, fast visual intelligence.</p>
+        </a>
+
+        <article class="product-card">
+          <h3>Chanakya</h3>
+          <p>A language model built to support smart conversations, reasoning, and knowledge tasks.</p>
+        </article>
+
+      </div>
+    </section>
+
+    <section id="login" class="login-section">
+      <form class="login-box" id="loginForm">
+        <h2>Create your Anigma account</h2>
+        <p class="login-note">Register to explore Anigma products and continue to your profile.</p>
+        <label>
+          Full Name
+          <input id="fullName" type="text" placeholder="Your name" required />
+        </label>
+        <label>
+          Email
+          <input id="email" type="email" placeholder="you@example.com" required />
+        </label>
+        <label>
+          Password
+          <input id="password" type="password" placeholder="Enter password" required />
+        </label>
+        <button type="submit">Register</button>
+        <p class="account-switch">
+          Already have an account?
+          <button type="button" id="showLoginButton">Login</button>
+        </p>
+      </form>
+
+      <form class="login-box hidden" id="existingLoginForm">
+        <h2>Welcome back</h2>
+        <p class="login-note">Login to continue exploring Anigma.</p>
+        <label>
+          Email
+          <input id="loginEmail" type="email" placeholder="you@example.com" required />
+        </label>
+        <label>
+          Password
+          <input id="loginPassword" type="password" placeholder="Enter password" required />
+        </label>
+        <button type="submit">Login</button>
+        <p class="account-switch">
+          New to Anigma?
+          <button type="button" id="showRegisterButton">Create account</button>
+        </p>
+      </form>
+
+      <div class="dashboard hidden" id="dashboard">
+        <p class="eyebrow">Profile</p>
+        <h2>Welcome to Anigma</h2>
+        <p id="welcomeText">You are logged in.</p>
+        <div class="dashboard-actions">
+          <a class="primary-button" href="#products">Explore Products</a>
+          <button type="button" id="logoutButton">Logout</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

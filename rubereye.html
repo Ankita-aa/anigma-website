@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rubereye | Anigma</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="Anigma home">
+      <img src="anigma_logo.jpg" alt="Anigma logo" />
+    </a>
+
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="index.html#products">Products</a>
+      <a class="login-link" href="index.html#login">Login</a>
+    </nav>
+  </header>
+
+  <main class="tool-page">
+    <section class="tool-hero">
+      <p class="eyebrow">Rubereye</p>
+      <h1>Classify images as AI-generated or real.</h1>
+      <p>
+        Upload an image and let Rubereye analyze visual patterns to identify
+        whether it appears AI-generated or authentic.
+      </p>
+    </section>
+
+    <section class="tool-panel rubereye-panel">
+      <form class="tool-form" id="rubereyeForm">
+        <label>
+          Upload image
+          <input id="rubereyeImage" type="file" accept="image/*" required />
+        </label>
+
+        <button type="submit">Check</button>
+      </form>
+
+      <aside class="result-box hidden" id="rubereyeResult"></aside>
+    </section>
+  </main>
+
+  <script src="tool-pages.js"></script>
+</body>
+</html>
