@@ -477,6 +477,112 @@ a.slide:hover h2 {
   padding-left: 20px;
 }
 
+.vasp-ref-page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 22px 20px 34px;
+  display: grid;
+  gap: 16px;
+}
+
+.vasp-ref-card {
+  background: rgba(8, 10, 18, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.vasp-ref-sub {
+  margin-top: 0;
+  opacity: 0.85;
+}
+
+.vasp-ref-label {
+  display: block;
+  margin: 10px 0 6px;
+  font-size: 14px;
+}
+
+#vaspForm input,
+#vaspForm textarea,
+#vaspForm button {
+  width: 100%;
+}
+
+#vaspForm textarea,
+#vaspForm input {
+  background: #11182e;
+  color: #f8fafc;
+  border: 1px solid #2f3c65;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+#vaspForm button {
+  margin-top: 12px;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, #2e8cf8, #33b7f8);
+  color: #061122;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#vaspForm button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.vasp-ref-status {
+  margin-top: 10px;
+  min-height: 24px;
+  font-size: 14px;
+}
+
+.vasp-ref-status.loading::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #f8fafc;
+  border-radius: 50%;
+  margin-right: 8px;
+  animation: spin 0.8s linear infinite;
+  vertical-align: -2px;
+}
+
+.vasp-ref-result video {
+  width: 100%;
+  max-height: 520px;
+  border-radius: 10px;
+  background: #000;
+  display: none;
+}
+
+.vasp-ref-error {
+  color: #fecaca;
+  margin-bottom: 8px;
+}
+
+#vaspDownloadLink {
+  display: block;
+  margin-top: 10px;
+  color: #8ce8ff;
+}
+
+#vaspResponse {
+  margin-top: 10px;
+  white-space: pre-wrap;
+  background: #0d1324;
+  border-radius: 10px;
+  padding: 10px;
+  max-height: 280px;
+  overflow: auto;
+  font-size: 12px;
+}
+
 @media (max-width: 900px) {
   .hero-section {
     grid-template-columns: 1fr;

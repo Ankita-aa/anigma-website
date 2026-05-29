@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VASP | Anigma</title>
+  <title>VASP Studio | Anigma</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -18,37 +18,42 @@
     </nav>
   </header>
 
-  <main class="tool-page">
-    <section class="tool-hero">
-      <p class="eyebrow">VASP</p>
-      <h1>Shape every video with intelligent editing support.</h1>
-      <p>
-        Upload your media, add a caption, and get a ready reel video made for
-        fast, polished sharing.
-      </p>
-    </section>
+  <main class="vasp-ref-page">
+    <section class="vasp-ref-card">
+      <h1>Generate Video</h1>
+      <p class="vasp-ref-sub">Upload one video and enter an instruction for VASP.</p>
 
-    <section class="tool-panel">
-      <form class="tool-form" id="vaspForm">
-        <label>
-          Instruction
-          <textarea id="vaspInstruction" placeholder="Example: Make this reel energetic, short, and suitable for Instagram." required></textarea>
-        </label>
+      <form id="vaspForm">
+        <label class="vasp-ref-label" for="vaspBaseUrl">Railway API Base URL</label>
+        <input id="vaspBaseUrl" type="url" placeholder="https://your-service.up.railway.app" required />
 
-        <label>
-          Media
-          <input id="vaspMedia" type="file" required />
-        </label>
+        <label class="vasp-ref-label" for="vaspEndpoint">API Route</label>
+        <input id="vaspEndpoint" type="text" value="/generate" required />
 
-        <label>
-          Caption
-          <input id="vaspCaption" type="text" placeholder="Example: Turning simple clips into standout reels" required />
-        </label>
+        <label class="vasp-ref-label" for="vaspApiKey">API Key (optional)</label>
+        <input id="vaspApiKey" type="password" placeholder="Bearer token" />
 
-        <button type="submit">Create Reel</button>
+        <label class="vasp-ref-label" for="vaspMedia">Video</label>
+        <input id="vaspMedia" name="video" type="file" accept="video/*" required />
+
+        <label class="vasp-ref-label" for="vaspInstruction">Instruction</label>
+        <textarea id="vaspInstruction" rows="5" placeholder="Create a clean engaging short-form video with synced captions." required></textarea>
+
+        <label class="vasp-ref-label" for="vaspCaption">Caption (optional)</label>
+        <input id="vaspCaption" type="text" placeholder="Optional caption text" />
+
+        <button id="vaspSubmit" type="submit">Generate</button>
       </form>
 
-      <aside class="result-box hidden" id="vaspResult"></aside>
+      <div id="vaspStatus" class="vasp-ref-status" aria-live="polite">No request sent yet.</div>
+    </section>
+
+    <section class="vasp-ref-card vasp-ref-result">
+      <h2>Result</h2>
+      <div id="vaspError" class="vasp-ref-error"></div>
+      <video id="vaspVideo" controls playsinline></video>
+      <a id="vaspDownloadLink" href="#" target="_blank" rel="noopener noreferrer"></a>
+      <pre id="vaspResponse">{}</pre>
     </section>
   </main>
 

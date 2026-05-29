@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VASP Generate</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="card">
+        <h1>Generate Video</h1>
+        <p class="sub">Upload one video and enter an instruction.</p>
+
+        <form id="generate-form">
+          <label class="label" for="video">Video</label>
+          <input id="video" name="video" type="file" accept="video/*" required />
+
+          <label class="label" for="instruction">Instruction</label>
+          <textarea
+            id="instruction"
+            name="instruction"
+            rows="5"
+            placeholder="Create a clean engaging short-form video with synced captions."
+            required
+          ></textarea>
+
+          <button id="generate-btn" type="submit">Generate</button>
+        </form>
+
+        <div id="status" class="status" aria-live="polite"></div>
+      </section>
+
+      <section class="card result">
+        <h2>Result</h2>
+        <div id="error" class="error"></div>
+        <video id="result-video" controls playsinline></video>
+        <a id="download-link" href="#" target="_blank" rel="noopener noreferrer"></a>
+        <pre id="result-json"></pre>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
