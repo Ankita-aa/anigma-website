@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VASP Studio | Anigma</title>
+  <title>VASP Generate | Anigma</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -18,42 +18,42 @@
     </nav>
   </header>
 
-  <main class="vasp-ref-page">
-    <section class="vasp-ref-card">
+  <main class="vasp-page">
+    <section class="vasp-card vasp-generate-card">
+      <p class="eyebrow">VASP</p>
       <h1>Generate Video</h1>
-      <p class="vasp-ref-sub">Upload one video and enter an instruction for VASP.</p>
+      <p class="vasp-sub">Upload a source video and describe the edit you want VASP to generate.</p>
 
       <form id="vaspForm">
-        <label class="vasp-ref-label" for="vaspBaseUrl">Railway API Base URL</label>
-        <input id="vaspBaseUrl" type="url" placeholder="https://your-service.up.railway.app" required />
-
-        <label class="vasp-ref-label" for="vaspEndpoint">API Route</label>
-        <input id="vaspEndpoint" type="text" value="/generate" required />
-
-        <label class="vasp-ref-label" for="vaspApiKey">API Key (optional)</label>
-        <input id="vaspApiKey" type="password" placeholder="Bearer token" />
-
-        <label class="vasp-ref-label" for="vaspMedia">Video</label>
+        <label class="vasp-label" for="vaspMedia">Video</label>
         <input id="vaspMedia" name="video" type="file" accept="video/*" required />
 
-        <label class="vasp-ref-label" for="vaspInstruction">Instruction</label>
-        <textarea id="vaspInstruction" rows="5" placeholder="Create a clean engaging short-form video with synced captions." required></textarea>
-
-        <label class="vasp-ref-label" for="vaspCaption">Caption (optional)</label>
-        <input id="vaspCaption" type="text" placeholder="Optional caption text" />
+        <label class="vasp-label" for="vaspInstruction">Instruction</label>
+        <textarea id="vaspInstruction" rows="6" placeholder="Create a clean engaging short-form video with synced captions." required></textarea>
 
         <button id="vaspSubmit" type="submit">Generate</button>
       </form>
 
-      <div id="vaspStatus" class="vasp-ref-status" aria-live="polite">No request sent yet.</div>
+      <div id="vaspStatus" class="vasp-status" aria-live="polite">Ready to generate.</div>
     </section>
 
-    <section class="vasp-ref-card vasp-ref-result">
-      <h2>Result</h2>
-      <div id="vaspError" class="vasp-ref-error"></div>
+    <section class="vasp-card vasp-result-card">
+      <div class="vasp-result-header">
+        <div>
+          <p class="eyebrow">Result</p>
+          <h2>Generated Output</h2>
+        </div>
+        <span id="vaspEditName" class="vasp-edit-name"></span>
+      </div>
+
+      <div id="vaspError" class="vasp-error"></div>
       <video id="vaspVideo" controls playsinline></video>
-      <a id="vaspDownloadLink" href="#" target="_blank" rel="noopener noreferrer"></a>
-      <pre id="vaspResponse">{}</pre>
+      <a id="vaspDownloadLink" class="vasp-download-link" href="#" target="_blank" rel="noopener noreferrer"></a>
+
+      <details id="vaspTranscriptWrap" class="vasp-transcript" open>
+        <summary>Transcript</summary>
+        <p id="vaspTranscript">Generated transcript will appear here.</p>
+      </details>
     </section>
   </main>
 

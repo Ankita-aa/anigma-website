@@ -477,30 +477,42 @@ a.slide:hover h2 {
   padding-left: 20px;
 }
 
-.vasp-ref-page {
-  max-width: 1080px;
+.vasp-page {
+  min-height: calc(100vh - 76px);
+  max-width: 1120px;
   margin: 0 auto;
-  padding: 22px 20px 34px;
+  padding: 34px 7vw 56px;
   display: grid;
-  gap: 16px;
+  grid-template-columns: minmax(280px, 0.82fr) minmax(320px, 1.18fr);
+  gap: 18px;
+  align-items: start;
 }
 
-.vasp-ref-card {
-  background: rgba(8, 10, 18, 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 14px;
-  padding: 16px;
+.vasp-card {
+  padding: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.22);
 }
 
-.vasp-ref-sub {
-  margin-top: 0;
-  opacity: 0.85;
+.vasp-generate-card h1 {
+  margin-bottom: 12px;
+  font-size: 38px;
 }
 
-.vasp-ref-label {
+.vasp-sub {
+  margin-bottom: 22px;
+  color: #b9c8d8;
+  line-height: 1.55;
+}
+
+.vasp-label {
   display: block;
-  margin: 10px 0 6px;
+  margin: 14px 0 8px;
+  color: #dbeafe;
   font-size: 14px;
+  font-weight: 800;
 }
 
 #vaspForm input,
@@ -509,78 +521,131 @@ a.slide:hover h2 {
   width: 100%;
 }
 
-#vaspForm textarea,
-#vaspForm input {
-  background: #11182e;
-  color: #f8fafc;
-  border: 1px solid #2f3c65;
-  border-radius: 10px;
-  padding: 10px;
+#vaspForm input,
+#vaspForm textarea {
+  min-height: 46px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  background: #071015;
+  color: #ffffff;
+  font: inherit;
+}
+
+#vaspForm textarea {
+  min-height: 144px;
+  resize: vertical;
 }
 
 #vaspForm button {
-  margin-top: 12px;
-  border: none;
-  border-radius: 10px;
-  padding: 12px 14px;
-  background: linear-gradient(135deg, #2e8cf8, #33b7f8);
-  color: #061122;
-  font-weight: 700;
+  min-height: 50px;
+  margin-top: 16px;
+  border: 0;
+  border-radius: 8px;
+  background: #2dd4bf;
+  color: #071015;
+  font-size: 16px;
+  font-weight: 800;
   cursor: pointer;
 }
 
 #vaspForm button:disabled {
-  opacity: 0.6;
+  opacity: 0.62;
   cursor: not-allowed;
 }
 
-.vasp-ref-status {
-  margin-top: 10px;
+.vasp-status {
+  margin-top: 14px;
   min-height: 24px;
+  color: #cbd5e1;
   font-size: 14px;
+  line-height: 1.45;
 }
 
-.vasp-ref-status.loading::before {
+.vasp-status.loading::before {
   content: "";
   display: inline-block;
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-top-color: #f8fafc;
-  border-radius: 50%;
   margin-right: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.24);
+  border-top-color: #2dd4bf;
+  border-radius: 50%;
   animation: spin 0.8s linear infinite;
   vertical-align: -2px;
 }
 
-.vasp-ref-result video {
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.vasp-result-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.vasp-result-header h2 {
+  margin-bottom: 0;
+  font-size: 28px;
+}
+
+.vasp-edit-name {
+  max-width: 44%;
+  padding-top: 4px;
+  color: #8ce8ff;
+  font-size: 13px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.vasp-error {
+  margin-bottom: 12px;
+  color: #fecaca;
+  line-height: 1.5;
+}
+
+.vasp-result-card video {
   width: 100%;
   max-height: 520px;
-  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
   background: #000;
   display: none;
 }
 
-.vasp-ref-error {
-  color: #fecaca;
-  margin-bottom: 8px;
-}
-
-#vaspDownloadLink {
+.vasp-download-link {
   display: block;
-  margin-top: 10px;
-  color: #8ce8ff;
+  width: fit-content;
+  margin-top: 12px;
+  color: #2dd4bf;
+  font-weight: 800;
 }
 
-#vaspResponse {
-  margin-top: 10px;
-  white-space: pre-wrap;
-  background: #0d1324;
-  border-radius: 10px;
-  padding: 10px;
-  max-height: 280px;
+.vasp-transcript {
+  margin-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding-top: 16px;
+}
+
+.vasp-transcript summary {
+  color: #eef7f8;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.vasp-transcript p {
+  margin: 12px 0 0;
+  max-height: 260px;
   overflow: auto;
-  font-size: 12px;
+  white-space: pre-wrap;
+  color: #cbd5e1;
+  line-height: 1.6;
 }
 
 @media (max-width: 900px) {
@@ -593,6 +658,10 @@ a.slide:hover h2 {
   }
 
   .tool-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .vasp-page {
     grid-template-columns: 1fr;
   }
 }
@@ -627,5 +696,28 @@ a.slide:hover h2 {
 
   .product-grid {
     grid-template-columns: 1fr;
+  }
+
+  .vasp-page {
+    padding: 24px 5vw 42px;
+  }
+
+  .vasp-card {
+    padding: 18px;
+  }
+
+  .vasp-generate-card h1 {
+    font-size: 32px;
+  }
+
+  .vasp-result-header {
+    display: block;
+  }
+
+  .vasp-edit-name {
+    display: block;
+    max-width: 100%;
+    margin-top: 8px;
+    text-align: left;
   }
 }

@@ -1,136 +1,125 @@
 ﻿const vaspForm = document.querySelector("#vaspForm");
 const rubereyeForm = document.querySelector("#rubereyeForm");
-
-function tryExtractVideoUrl(payload) {
-  if (!payload || typeof payload !== "object") {
-    return "";
-  }
-
-  const directKeys = ["video_url", "videoUrl", "output_url", "outputUrl", "url"];
-  for (const key of directKeys) {
-    if (typeof payload[key] === "string" && payload[key].trim()) {
-      return payload[key].trim();
-    }
-  }
-
-  if (payload.data && typeof payload.data === "object") {
-    return tryExtractVideoUrl(payload.data);
-  }
-
-  if (Array.isArray(payload.outputs)) {
-    for (const item of payload.outputs) {
-      const extracted = tryExtractVideoUrl(item);
-      if (extracted) {
-        return extracted;
-      }
-    }
-  }
-
-  return "";
-}
+const VASP_API_BASE = "https://vasp-api-production.up.railway.app";
 
 if (vaspForm) {
   const statusEl = document.querySelector("#vaspStatus");
   const errorEl = document.querySelector("#vaspError");
   const resultVideo = document.querySelector("#vaspVideo");
-  const resultJson = document.querySelector("#vaspResponse");
   const downloadLink = document.querySelector("#vaspDownloadLink");
+  const transcriptEl = document.querySelector("#vaspTranscript");
+  const editNameEl = document.querySelector("#vaspEditName");
   const button = document.querySelector("#vaspSubmit");
 
   function setStatus(text, loading = false) {
     statusEl.textContent = text;
-    statusEl.className = loading ? "vasp-ref-status loading" : "vasp-ref-status";
+    statusEl.className = loading ? "vasp-status loading" : "vasp-status";
+  }
+
+  function resetResult() {
+    errorEl.textContent = "";
+    resultVideo.pause();
+    resultVideo.style.display = "none";
+    resultVideo.removeAttribute("src");
+    downloadLink.removeAttribute("href");
+    downloadLink.textContent = "";
+    transcriptEl.textContent = "Generated transcript will appear here.";
+    editNameEl.textContent = "";
+  }
+
+  async function readResponseBody(response) {
+    const text = await response.text();
+
+    if (!text) {
+      return {};
+    }
+
+    try {
+      return JSON.parse(text);
+    } catch (error) {
+      return {
+        status: "error",
+        message: "The VASP API returned a response that was not valid JSON.",
+        raw: text,
+      };
+    }
+  }
+
+  function getBackendMessage(data, fallback) {
+    return data?.message || data?.error || data?.detail || fallback;
   }
 
   vaspForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    const baseUrl = document.querySelector("#vaspBaseUrl").value.trim().replace(/\/$/, "");
-    const endpoint = document.querySelector("#vaspEndpoint").value.trim();
-    const apiKey = document.querySelector("#vaspApiKey").value.trim();
     const instruction = document.querySelector("#vaspInstruction").value.trim();
-    const caption = document.querySelector("#vaspCaption").value.trim();
     const media = document.querySelector("#vaspMedia").files[0];
+
+    resetResult();
 
     if (!media) {
       errorEl.textContent = "Please select a video file.";
+      setStatus("Add a video before generating.");
       return;
     }
 
-    const endpointPath = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
-    const url = `${baseUrl}${endpointPath}`;
+    if (!media.type.startsWith("video/")) {
+      errorEl.textContent = "Please upload a valid video file.";
+      setStatus("Choose a video file to continue.");
+      return;
+    }
+
+    if (!instruction) {
+      errorEl.textContent = "Please enter an instruction.";
+      setStatus("Describe the edit before generating.");
+      return;
+    }
 
     const payload = new FormData();
-    payload.append("instruction", instruction);
-    if (caption) {
-      payload.append("caption", caption);
-    }
-    payload.append("media", media);
     payload.append("video", media);
+    payload.append("instruction", instruction);
 
-    const headers = {};
-    if (apiKey) {
-      headers.Authorization = `Bearer ${apiKey}`;
-    }
-
-    errorEl.textContent = "";
-    resultVideo.pause();
-    resultVideo.style.display = "none";
-    resultVideo.removeAttribute("src");
-    downloadLink.textContent = "";
-    resultJson.textContent = "";
     button.disabled = true;
-    setStatus("Uploading and generating video. This can take a few minutes.", true);
+    setStatus("Uploading video to VASP. Generation can take several minutes.", true);
 
     try {
-      const res = await fetch(url, {
+      const response = await fetch(`${VASP_API_BASE}/generate`, {
         method: "POST",
-        headers,
         body: payload,
       });
 
-      const contentType = res.headers.get("content-type") || "";
-      const isJson = contentType.includes("application/json");
-      const data = isJson ? await res.json() : await res.text();
+      const data = await readResponseBody(response);
 
-      if (!res.ok) {
-        const errorPayload = {
-          status: res.status,
-          statusText: res.statusText,
-          body: data,
-        };
-        resultJson.textContent = JSON.stringify(errorPayload, null, 2);
-        errorEl.textContent = "Request failed. Inspect response details below.";
+      if (!response.ok) {
+        errorEl.textContent = getBackendMessage(
+          data,
+          `VASP request failed with HTTP ${response.status}.`
+        );
         setStatus("Generation failed.");
         return;
       }
 
-      const displayPayload = {
-        status: res.status,
-        statusText: res.statusText,
-        data,
-      };
-
-      resultJson.textContent = JSON.stringify(displayPayload, null, 2);
-      setStatus("Generation complete.");
-
-      const videoUrl = tryExtractVideoUrl(data);
-      if (videoUrl) {
-        resultVideo.src = videoUrl;
-        resultVideo.style.display = "block";
-        downloadLink.href = videoUrl;
-        downloadLink.textContent = "Open generated video";
+      if (data.status === "error") {
+        errorEl.textContent = getBackendMessage(data, "The VASP backend reported an error.");
+        setStatus("Generation failed.");
+        return;
       }
+
+      if (data.status !== "ok" || !data.video_url) {
+        errorEl.textContent = "VASP finished, but no generated video URL was returned.";
+        setStatus("Generation response was incomplete.");
+        return;
+      }
+
+      resultVideo.src = data.video_url;
+      resultVideo.style.display = "block";
+      downloadLink.href = data.video_url;
+      downloadLink.textContent = "Open or download generated video";
+      transcriptEl.textContent = data.transcript || "No transcript was returned.";
+      editNameEl.textContent = data.edit_name || "";
+      setStatus("Generation complete.");
     } catch (error) {
-      resultJson.textContent = JSON.stringify(
-        {
-          error: "Network or CORS error",
-          details: error.message,
-        },
-        null,
-        2
-      );
-      errorEl.textContent = "Could not reach Railway API. Check URL, CORS, and backend status.";
+      errorEl.textContent = `Could not reach the VASP API. Check Railway status and CORS settings. ${error.message}`;
       setStatus("Generation failed.");
     } finally {
       button.disabled = false;
