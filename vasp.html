@@ -31,6 +31,17 @@
         <label class="vasp-label" for="vaspInstruction">Instruction</label>
         <textarea id="vaspInstruction" rows="6" placeholder="Create a clean engaging short-form video with synced captions." required></textarea>
 
+        <section class="vasp-supporting-media">
+          <div class="vasp-supporting-header">
+            <div>
+              <h2>Supporting media</h2>
+              <p>Add extra images or videos with the exact about and aim values VASP should use.</p>
+            </div>
+            <button id="vaspAddMediaRow" class="vasp-small-button" type="button">Add media</button>
+          </div>
+          <div id="vaspSupportingMediaList" class="vasp-supporting-list"></div>
+        </section>
+
         <details class="vasp-advanced">
           <summary>Advanced settings</summary>
 
@@ -117,6 +128,10 @@
           <dd id="vaspInterJson">Not available yet.</dd>
           <dt>Planner output</dt>
           <dd id="vaspPlannerOutput">Not available yet.</dd>
+          <dt>Generation options</dt>
+          <dd id="vaspGenerationOptions">Not available yet.</dd>
+          <dt>Supporting media rows</dt>
+          <dd id="vaspSupportingMediaRows">Not available yet.</dd>
         </dl>
 
         <section class="vasp-file-section">
