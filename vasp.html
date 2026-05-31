@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VASP | Anigma</title>
+  <title>VASP Generate | Anigma</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -18,37 +18,42 @@
     </nav>
   </header>
 
-  <main class="tool-page">
-    <section class="tool-hero">
+  <main class="vasp-page">
+    <section class="vasp-card vasp-generate-card">
       <p class="eyebrow">VASP</p>
-      <h1>Shape every video with intelligent editing support.</h1>
-      <p>
-        Upload your media, add a caption, and get a ready reel video made for
-        fast, polished sharing.
-      </p>
-    </section>
+      <h1>Generate Video</h1>
+      <p class="vasp-sub">Upload a source video and describe the edit you want VASP to generate.</p>
 
-    <section class="tool-panel">
-      <form class="tool-form" id="vaspForm">
-        <label>
-          Instruction
-          <textarea id="vaspInstruction" placeholder="Example: Make this reel energetic, short, and suitable for Instagram." required></textarea>
-        </label>
+      <form id="vaspForm">
+        <label class="vasp-label" for="vaspMedia">Video</label>
+        <input id="vaspMedia" name="video" type="file" accept="video/*" required />
 
-        <label>
-          Media
-          <input id="vaspMedia" type="file" required />
-        </label>
+        <label class="vasp-label" for="vaspInstruction">Instruction</label>
+        <textarea id="vaspInstruction" rows="6" placeholder="Create a clean engaging short-form video with synced captions." required></textarea>
 
-        <label>
-          Caption
-          <input id="vaspCaption" type="text" placeholder="Example: Turning simple clips into standout reels" required />
-        </label>
-
-        <button type="submit">Create Reel</button>
+        <button id="vaspSubmit" type="submit">Generate</button>
       </form>
 
-      <aside class="result-box hidden" id="vaspResult"></aside>
+      <div id="vaspStatus" class="vasp-status" aria-live="polite">Ready to generate.</div>
+    </section>
+
+    <section class="vasp-card vasp-result-card">
+      <div class="vasp-result-header">
+        <div>
+          <p class="eyebrow">Result</p>
+          <h2>Generated Output</h2>
+        </div>
+        <span id="vaspEditName" class="vasp-edit-name"></span>
+      </div>
+
+      <div id="vaspError" class="vasp-error"></div>
+      <video id="vaspVideo" controls playsinline></video>
+      <a id="vaspDownloadLink" class="vasp-download-link" href="#" target="_blank" rel="noopener noreferrer"></a>
+
+      <details id="vaspTranscriptWrap" class="vasp-transcript" open>
+        <summary>Transcript</summary>
+        <p id="vaspTranscript">Generated transcript will appear here.</p>
+      </details>
     </section>
   </main>
 
