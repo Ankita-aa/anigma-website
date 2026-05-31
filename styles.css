@@ -545,6 +545,66 @@ a.slide:hover h2 {
   border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
+.vasp-supporting-media {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.vasp-supporting-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.vasp-supporting-header h2 {
+  margin-bottom: 6px;
+  font-size: 20px;
+}
+
+.vasp-supporting-header p {
+  margin-bottom: 0;
+  color: #b9c8d8;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.vasp-small-button,
+.vasp-remove-media {
+  width: auto !important;
+  min-height: 38px !important;
+  padding: 8px 12px !important;
+  font-size: 13px !important;
+}
+
+.vasp-supporting-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.vasp-media-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) minmax(140px, 1fr) minmax(140px, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(7, 16, 21, 0.42);
+}
+
+.vasp-media-row .vasp-label {
+  margin: 0;
+}
+
+.vasp-remove-media {
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  background: transparent !important;
+  color: #eef7f8 !important;
+}
+
 .vasp-advanced summary {
   color: #eef7f8;
   cursor: pointer;
@@ -837,5 +897,20 @@ a.slide:hover h2 {
     max-width: 100%;
     margin-top: 8px;
     text-align: left;
+  }
+
+  .vasp-supporting-header,
+  .vasp-media-row {
+    display: block;
+  }
+
+  .vasp-small-button,
+  .vasp-remove-media {
+    width: 100% !important;
+    margin-top: 10px !important;
+  }
+
+  .vasp-media-row .vasp-label {
+    margin-top: 12px;
   }
 }

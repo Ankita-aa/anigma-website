@@ -12,8 +12,12 @@ if (vaspForm) {
   const runDirEl = document.querySelector("#vaspRunDir");
   const interJsonEl = document.querySelector("#vaspInterJson");
   const plannerOutputEl = document.querySelector("#vaspPlannerOutput");
+  const generationOptionsEl = document.querySelector("#vaspGenerationOptions");
+  const supportingMediaRowsEl = document.querySelector("#vaspSupportingMediaRows");
   const plannerFilesEl = document.querySelector("#vaspPlannerFiles");
   const refinerFilesEl = document.querySelector("#vaspRefinerFiles");
+  const supportingMediaList = document.querySelector("#vaspSupportingMediaList");
+  const addMediaRowButton = document.querySelector("#vaspAddMediaRow");
   const button = document.querySelector("#vaspSubmit");
   const stageMessages = [
     "Uploading video to VASP.",
@@ -58,6 +62,8 @@ if (vaspForm) {
     runDirEl.textContent = "Not available yet.";
     interJsonEl.textContent = "Not available yet.";
     plannerOutputEl.textContent = "Not available yet.";
+    generationOptionsEl.textContent = "Not available yet.";
+    supportingMediaRowsEl.textContent = "Not available yet.";
     plannerFilesEl.textContent = "Not available yet.";
     refinerFilesEl.textContent = "Not available yet.";
   }
@@ -127,6 +133,74 @@ if (vaspForm) {
     });
   }
 
+  function createSupportingMediaRow() {
+    const row = document.createElement("div");
+    row.className = "vasp-media-row";
+
+    const fileLabel = document.createElement("label");
+    fileLabel.className = "vasp-label";
+    fileLabel.textContent = "Media file";
+    const fileInput = document.createElement("input");
+    fileInput.className = "vasp-extra-media-file";
+    fileInput.type = "file";
+    fileInput.accept = "image/*,video/*";
+    fileLabel.appendChild(fileInput);
+
+    const aboutLabel = document.createElement("label");
+    aboutLabel.className = "vasp-label";
+    aboutLabel.textContent = "About";
+    const aboutInput = document.createElement("input");
+    aboutInput.className = "vasp-extra-media-about";
+    aboutInput.type = "text";
+    aboutInput.placeholder = "Example: close-up product shot on a desk";
+    aboutLabel.appendChild(aboutInput);
+
+    const aimLabel = document.createElement("label");
+    aimLabel.className = "vasp-label";
+    aimLabel.textContent = "Aim";
+    const aimInput = document.createElement("input");
+    aimInput.className = "vasp-extra-media-aim";
+    aimInput.type = "text";
+    aimInput.placeholder = "Example: use as visual support during intro";
+    aimLabel.appendChild(aimInput);
+
+    const removeButton = document.createElement("button");
+    removeButton.className = "vasp-remove-media";
+    removeButton.type = "button";
+    removeButton.textContent = "Remove";
+    removeButton.addEventListener("click", () => row.remove());
+
+    row.append(fileLabel, aboutLabel, aimLabel, removeButton);
+    supportingMediaList.appendChild(row);
+  }
+
+  function getSupportingMediaRows() {
+    return Array.from(supportingMediaList.querySelectorAll(".vasp-media-row"));
+  }
+
+  function getPlannerFiles(data) {
+    return [
+      data.planner_files?.input || data.planner_input_file,
+      data.planner_files?.output || data.planner_output_file,
+      data.planner_files?.raw_output || data.planner_raw_output_file,
+    ];
+  }
+
+  function getRefinerFiles(data) {
+    const groupedInputs = Array.isArray(data.refiner_files?.inputs) ? data.refiner_files.inputs : [];
+    const groupedOutputs = Array.isArray(data.refiner_files?.outputs) ? data.refiner_files.outputs : [];
+    const legacyInputs = Array.isArray(data.refiner_input_files) ? data.refiner_input_files : [];
+    const legacyOutputs = Array.isArray(data.refiner_output_files) ? data.refiner_output_files : [];
+
+    return [
+      ...(groupedInputs.length ? groupedInputs : legacyInputs),
+      ...(groupedOutputs.length ? groupedOutputs : legacyOutputs),
+    ];
+  }
+
+  addMediaRowButton.addEventListener("click", createSupportingMediaRow);
+  createSupportingMediaRow();
+
   vaspForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -162,6 +236,25 @@ if (vaspForm) {
       return;
     }
 
+    const supportingMedia = [];
+    for (const row of getSupportingMediaRows()) {
+      const file = row.querySelector(".vasp-extra-media-file").files[0];
+      const about = row.querySelector(".vasp-extra-media-about").value.trim();
+      const aim = row.querySelector(".vasp-extra-media-aim").value.trim();
+
+      if (!file && !about && !aim) {
+        continue;
+      }
+
+      if (!file || !about || !aim) {
+        errorEl.textContent = "Each supporting media row needs a file, about value, and aim value.";
+        setStatus("Complete supporting media details before generating.");
+        return;
+      }
+
+      supportingMedia.push({ file, about, aim });
+    }
+
     const creativityValue = Number.parseInt(creativity, 10);
     if (!Number.isInteger(creativityValue) || creativityValue < 1 || creativityValue > 5) {
       errorEl.textContent = "Creativity must be between 1 and 5.";
@@ -192,6 +285,11 @@ if (vaspForm) {
     payload.append("dynamic_prompts", String(dynamicPrompts));
     payload.append("aim_refinement", String(aimRefinement));
     payload.append("refine_crawl_media_aims", String(refineCrawlMediaAims));
+    supportingMedia.forEach((item) => {
+      payload.append("media_files", item.file);
+      payload.append("media_about", item.about);
+      payload.append("media_aim", item.aim);
+    });
 
     button.disabled = true;
     startStageUpdates();
@@ -234,15 +332,10 @@ if (vaspForm) {
       runDirEl.textContent = formatDiagnostic(data.run_dir);
       interJsonEl.textContent = formatDiagnostic(data.inter_json);
       plannerOutputEl.textContent = formatDiagnostic(data.planner_output);
-      renderFileGroup(plannerFilesEl, [
-        data.planner_input_file,
-        data.planner_output_file,
-        data.planner_raw_output_file,
-      ]);
-      renderFileGroup(refinerFilesEl, [
-        ...(Array.isArray(data.refiner_input_files) ? data.refiner_input_files : []),
-        ...(Array.isArray(data.refiner_output_files) ? data.refiner_output_files : []),
-      ]);
+      generationOptionsEl.textContent = formatDiagnostic(data.generation_options);
+      supportingMediaRowsEl.textContent = formatDiagnostic(data.supporting_media);
+      renderFileGroup(plannerFilesEl, getPlannerFiles(data));
+      renderFileGroup(refinerFilesEl, getRefinerFiles(data));
       setStatus("Generation complete.");
     } catch (error) {
       errorEl.textContent = `Could not reach the VASP API. Check Railway status and CORS settings. ${error.message}`;
