@@ -31,6 +31,59 @@
         <label class="vasp-label" for="vaspInstruction">Instruction</label>
         <textarea id="vaspInstruction" rows="6" placeholder="Create a clean engaging short-form video with synced captions." required></textarea>
 
+        <details class="vasp-advanced">
+          <summary>Advanced settings</summary>
+
+          <label class="vasp-label" for="vaspEditNameInput">Edit name</label>
+          <input id="vaspEditNameInput" name="edit_name" type="text" placeholder="Optional, auto-generated if empty" />
+
+          <label class="vasp-label" for="vaspCreativity">Creativity</label>
+          <select id="vaspCreativity" name="creativity">
+            <option value="1">1 - Minimal</option>
+            <option value="2" selected>2 - Balanced</option>
+            <option value="3">3 - Expressive</option>
+            <option value="4">4 - Bold</option>
+            <option value="5">5 - Experimental</option>
+          </select>
+
+          <label class="vasp-label" for="vaspMediaCollectionMode">Media collection</label>
+          <select id="vaspMediaCollectionMode" name="media_collection_mode">
+            <option value="none" selected>None</option>
+            <option value="library">Library</option>
+            <option value="crawl">Crawl</option>
+          </select>
+
+          <label class="vasp-label" for="vaspOptionalMediaCount">Optional media count</label>
+          <input id="vaspOptionalMediaCount" name="optional_media_count" type="number" min="5" max="50" step="1" value="10" />
+
+          <div class="vasp-toggle-grid" aria-label="Advanced toggles">
+            <label class="vasp-toggle">
+              <input id="vaspUsePresetBackgrounds" type="checkbox" checked />
+              <span>Use preset backgrounds</span>
+            </label>
+
+            <label class="vasp-toggle">
+              <input id="vaspRenderCaptions" type="checkbox" checked />
+              <span>Render captions</span>
+            </label>
+
+            <label class="vasp-toggle">
+              <input id="vaspDynamicPrompts" type="checkbox" />
+              <span>Dynamic prompts</span>
+            </label>
+
+            <label class="vasp-toggle">
+              <input id="vaspAimRefinement" type="checkbox" />
+              <span>Aim refinement</span>
+            </label>
+
+            <label class="vasp-toggle">
+              <input id="vaspRefineCrawlMediaAims" type="checkbox" />
+              <span>Refine crawled media aims</span>
+            </label>
+          </div>
+        </details>
+
         <button id="vaspSubmit" type="submit">Generate</button>
       </form>
 
@@ -53,6 +106,18 @@
       <details id="vaspTranscriptWrap" class="vasp-transcript" open>
         <summary>Transcript</summary>
         <p id="vaspTranscript">Generated transcript will appear here.</p>
+      </details>
+
+      <details id="vaspDiagnosticsWrap" class="vasp-diagnostics">
+        <summary>Diagnostics</summary>
+        <dl>
+          <dt>Run directory</dt>
+          <dd id="vaspRunDir">Not available yet.</dd>
+          <dt>Intermediate JSON</dt>
+          <dd id="vaspInterJson">Not available yet.</dd>
+          <dt>Planner output</dt>
+          <dd id="vaspPlannerOutput">Not available yet.</dd>
+        </dl>
       </details>
     </section>
   </main>

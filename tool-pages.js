@@ -9,6 +9,9 @@ if (vaspForm) {
   const downloadLink = document.querySelector("#vaspDownloadLink");
   const transcriptEl = document.querySelector("#vaspTranscript");
   const editNameEl = document.querySelector("#vaspEditName");
+  const runDirEl = document.querySelector("#vaspRunDir");
+  const interJsonEl = document.querySelector("#vaspInterJson");
+  const plannerOutputEl = document.querySelector("#vaspPlannerOutput");
   const button = document.querySelector("#vaspSubmit");
 
   function setStatus(text, loading = false) {
@@ -25,6 +28,9 @@ if (vaspForm) {
     downloadLink.textContent = "";
     transcriptEl.textContent = "Generated transcript will appear here.";
     editNameEl.textContent = "";
+    runDirEl.textContent = "Not available yet.";
+    interJsonEl.textContent = "Not available yet.";
+    plannerOutputEl.textContent = "Not available yet.";
   }
 
   async function readResponseBody(response) {
@@ -49,11 +55,27 @@ if (vaspForm) {
     return data?.message || data?.error || data?.detail || fallback;
   }
 
+  function formatDiagnostic(value) {
+    if (value === undefined || value === null || value === "") {
+      return "Not returned.";
+    }
+    return typeof value === "string" ? value : JSON.stringify(value, null, 2);
+  }
+
   vaspForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const instruction = document.querySelector("#vaspInstruction").value.trim();
     const media = document.querySelector("#vaspMedia").files[0];
+    const editName = document.querySelector("#vaspEditNameInput").value.trim();
+    const creativity = document.querySelector("#vaspCreativity").value;
+    const mediaCollectionMode = document.querySelector("#vaspMediaCollectionMode").value;
+    const optionalMediaCount = document.querySelector("#vaspOptionalMediaCount").value;
+    const usePresetBackgrounds = document.querySelector("#vaspUsePresetBackgrounds").checked;
+    const renderCaptions = document.querySelector("#vaspRenderCaptions").checked;
+    const dynamicPrompts = document.querySelector("#vaspDynamicPrompts").checked;
+    const aimRefinement = document.querySelector("#vaspAimRefinement").checked;
+    const refineCrawlMediaAims = document.querySelector("#vaspRefineCrawlMediaAims").checked;
 
     resetResult();
 
@@ -75,9 +97,36 @@ if (vaspForm) {
       return;
     }
 
+    const creativityValue = Number.parseInt(creativity, 10);
+    if (!Number.isInteger(creativityValue) || creativityValue < 1 || creativityValue > 5) {
+      errorEl.textContent = "Creativity must be between 1 and 5.";
+      setStatus("Adjust advanced settings before generating.");
+      return;
+    }
+
+    const optionalMediaCountValue = Number.parseInt(optionalMediaCount, 10);
+    if (
+      !Number.isInteger(optionalMediaCountValue) ||
+      optionalMediaCountValue < 5 ||
+      optionalMediaCountValue > 50
+    ) {
+      errorEl.textContent = "Optional media count must be between 5 and 50.";
+      setStatus("Adjust advanced settings before generating.");
+      return;
+    }
+
     const payload = new FormData();
     payload.append("video", media);
     payload.append("instruction", instruction);
+    payload.append("edit_name", editName);
+    payload.append("creativity", String(creativityValue));
+    payload.append("media_collection_mode", mediaCollectionMode);
+    payload.append("optional_media_count", String(optionalMediaCountValue));
+    payload.append("use_preset_backgrounds", String(usePresetBackgrounds));
+    payload.append("render_captions", String(renderCaptions));
+    payload.append("dynamic_prompts", String(dynamicPrompts));
+    payload.append("aim_refinement", String(aimRefinement));
+    payload.append("refine_crawl_media_aims", String(refineCrawlMediaAims));
 
     button.disabled = true;
     setStatus("Uploading video to VASP. Generation can take several minutes.", true);
@@ -117,6 +166,9 @@ if (vaspForm) {
       downloadLink.textContent = "Open or download generated video";
       transcriptEl.textContent = data.transcript || "No transcript was returned.";
       editNameEl.textContent = data.edit_name || "";
+      runDirEl.textContent = formatDiagnostic(data.run_dir);
+      interJsonEl.textContent = formatDiagnostic(data.inter_json);
+      plannerOutputEl.textContent = formatDiagnostic(data.planner_output);
       setStatus("Generation complete.");
     } catch (error) {
       errorEl.textContent = `Could not reach the VASP API. Check Railway status and CORS settings. ${error.message}`;
