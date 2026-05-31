@@ -517,12 +517,14 @@ a.slide:hover h2 {
 
 #vaspForm input,
 #vaspForm textarea,
+#vaspForm select,
 #vaspForm button {
   width: 100%;
 }
 
 #vaspForm input,
-#vaspForm textarea {
+#vaspForm textarea,
+#vaspForm select {
   min-height: 46px;
   padding: 12px 14px;
   border: 1px solid rgba(255, 255, 255, 0.22);
@@ -535,6 +537,47 @@ a.slide:hover h2 {
 #vaspForm textarea {
   min-height: 144px;
   resize: vertical;
+}
+
+.vasp-advanced {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.vasp-advanced summary {
+  color: #eef7f8;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.vasp-toggle-grid {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.vasp-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  background: rgba(7, 16, 21, 0.5);
+  color: #dbeafe;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.vasp-toggle input {
+  flex: 0 0 auto;
+  width: 20px !important;
+  height: 20px;
+  min-height: 20px !important;
+  accent-color: #2dd4bf;
 }
 
 #vaspForm button {
@@ -633,7 +676,8 @@ a.slide:hover h2 {
   padding-top: 16px;
 }
 
-.vasp-transcript summary {
+.vasp-transcript summary,
+.vasp-diagnostics summary {
   color: #eef7f8;
   cursor: pointer;
   font-weight: 800;
@@ -646,6 +690,31 @@ a.slide:hover h2 {
   white-space: pre-wrap;
   color: #cbd5e1;
   line-height: 1.6;
+}
+
+.vasp-diagnostics {
+  margin-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding-top: 16px;
+}
+
+.vasp-diagnostics dl {
+  margin: 12px 0 0;
+}
+
+.vasp-diagnostics dt {
+  margin-top: 12px;
+  color: #8ce8ff;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.vasp-diagnostics dd {
+  margin: 5px 0 0;
+  color: #cbd5e1;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 @media (max-width: 900px) {
