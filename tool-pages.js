@@ -12,11 +12,38 @@ if (vaspForm) {
   const runDirEl = document.querySelector("#vaspRunDir");
   const interJsonEl = document.querySelector("#vaspInterJson");
   const plannerOutputEl = document.querySelector("#vaspPlannerOutput");
+  const plannerFilesEl = document.querySelector("#vaspPlannerFiles");
+  const refinerFilesEl = document.querySelector("#vaspRefinerFiles");
   const button = document.querySelector("#vaspSubmit");
+  const stageMessages = [
+    "Uploading video to VASP.",
+    "Transcribing source audio with WhisperX.",
+    "Preparing media captions and edit context.",
+    "Planning the edit with the VASP planner.",
+    "Refining each segment for timing, captions, and visuals.",
+    "Generating the final render instructions.",
+    "Rendering the output video.",
+    "Uploading the generated video for playback.",
+  ];
+  let stageTimer;
 
   function setStatus(text, loading = false) {
     statusEl.textContent = text;
     statusEl.className = loading ? "vasp-status loading" : "vasp-status";
+  }
+
+  function startStageUpdates() {
+    let stageIndex = 0;
+    setStatus(`${stageMessages[stageIndex]} Generation can take several minutes.`, true);
+
+    stageTimer = setInterval(() => {
+      stageIndex = Math.min(stageIndex + 1, stageMessages.length - 1);
+      setStatus(`${stageMessages[stageIndex]} Still working, please keep this tab open.`, true);
+    }, 18000);
+  }
+
+  function stopStageUpdates() {
+    clearInterval(stageTimer);
   }
 
   function resetResult() {
@@ -31,6 +58,8 @@ if (vaspForm) {
     runDirEl.textContent = "Not available yet.";
     interJsonEl.textContent = "Not available yet.";
     plannerOutputEl.textContent = "Not available yet.";
+    plannerFilesEl.textContent = "Not available yet.";
+    refinerFilesEl.textContent = "Not available yet.";
   }
 
   async function readResponseBody(response) {
@@ -60,6 +89,42 @@ if (vaspForm) {
       return "Not returned.";
     }
     return typeof value === "string" ? value : JSON.stringify(value, null, 2);
+  }
+
+  function renderFilePreview(file) {
+    const details = document.createElement("details");
+    details.className = "vasp-file-preview";
+
+    const summary = document.createElement("summary");
+    summary.textContent = file?.path || "Unnamed file";
+
+    const pre = document.createElement("pre");
+    pre.textContent = file?.content || "No content returned.";
+
+    if (file?.truncated) {
+      const note = document.createElement("p");
+      note.className = "vasp-file-note";
+      note.textContent = "Preview truncated.";
+      details.append(summary, note, pre);
+      return details;
+    }
+
+    details.append(summary, pre);
+    return details;
+  }
+
+  function renderFileGroup(container, files) {
+    container.textContent = "";
+
+    const visibleFiles = files.filter(Boolean);
+    if (!visibleFiles.length) {
+      container.textContent = "Not returned.";
+      return;
+    }
+
+    visibleFiles.forEach((file) => {
+      container.appendChild(renderFilePreview(file));
+    });
   }
 
   vaspForm.addEventListener("submit", async (event) => {
@@ -129,7 +194,7 @@ if (vaspForm) {
     payload.append("refine_crawl_media_aims", String(refineCrawlMediaAims));
 
     button.disabled = true;
-    setStatus("Uploading video to VASP. Generation can take several minutes.", true);
+    startStageUpdates();
 
     try {
       const response = await fetch(`${VASP_API_BASE}/generate`, {
@@ -169,11 +234,21 @@ if (vaspForm) {
       runDirEl.textContent = formatDiagnostic(data.run_dir);
       interJsonEl.textContent = formatDiagnostic(data.inter_json);
       plannerOutputEl.textContent = formatDiagnostic(data.planner_output);
+      renderFileGroup(plannerFilesEl, [
+        data.planner_input_file,
+        data.planner_output_file,
+        data.planner_raw_output_file,
+      ]);
+      renderFileGroup(refinerFilesEl, [
+        ...(Array.isArray(data.refiner_input_files) ? data.refiner_input_files : []),
+        ...(Array.isArray(data.refiner_output_files) ? data.refiner_output_files : []),
+      ]);
       setStatus("Generation complete.");
     } catch (error) {
       errorEl.textContent = `Could not reach the VASP API. Check Railway status and CORS settings. ${error.message}`;
       setStatus("Generation failed.");
     } finally {
+      stopStageUpdates();
       button.disabled = false;
       statusEl.classList.remove("loading");
     }
