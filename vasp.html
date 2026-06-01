@@ -22,11 +22,11 @@
     <section class="vasp-card vasp-generate-card">
       <p class="eyebrow">VASP</p>
       <h1>Generate Video</h1>
-      <p class="vasp-sub">Upload a source video and describe the edit you want VASP to generate.</p>
+      <p class="vasp-sub">Upload a main track, add direction, and optionally attach supporting media cues.</p>
 
       <form id="vaspForm">
-        <label class="vasp-label" for="vaspMedia">Video</label>
-        <input id="vaspMedia" name="video" type="file" accept="video/*" required />
+        <label class="vasp-label" for="vaspMedia">Main track</label>
+        <input id="vaspMedia" name="video" type="file" accept="video/*,audio/*" required />
 
         <label class="vasp-label" for="vaspInstruction">Instruction</label>
         <textarea id="vaspInstruction" rows="6" placeholder="Create a clean engaging short-form video with synced captions." required></textarea>
@@ -35,7 +35,7 @@
           <div class="vasp-supporting-header">
             <div>
               <h2>Supporting media</h2>
-              <p>Add extra images or videos with the exact about and aim values VASP should use.</p>
+              <p>Add extra media with the exact about and aim values VASP should use.</p>
             </div>
             <button id="vaspAddMediaRow" class="vasp-small-button" type="button">Add media</button>
           </div>

@@ -20,7 +20,7 @@ if (vaspForm) {
   const addMediaRowButton = document.querySelector("#vaspAddMediaRow");
   const button = document.querySelector("#vaspSubmit");
   const stageMessages = [
-    "Uploading video to VASP.",
+    "Uploading main track to VASP.",
     "Transcribing source audio with WhisperX.",
     "Preparing media captions and edit context.",
     "Planning the edit with the VASP planner.",
@@ -143,7 +143,7 @@ if (vaspForm) {
     const fileInput = document.createElement("input");
     fileInput.className = "vasp-extra-media-file";
     fileInput.type = "file";
-    fileInput.accept = "image/*,video/*";
+    fileInput.accept = "image/*,video/*,audio/*";
     fileLabel.appendChild(fileInput);
 
     const aboutLabel = document.createElement("label");
@@ -219,14 +219,14 @@ if (vaspForm) {
     resetResult();
 
     if (!media) {
-      errorEl.textContent = "Please select a video file.";
-      setStatus("Add a video before generating.");
+      errorEl.textContent = "Please select a main audio or video track.";
+      setStatus("Add a main track before generating.");
       return;
     }
 
-    if (!media.type.startsWith("video/")) {
-      errorEl.textContent = "Please upload a valid video file.";
-      setStatus("Choose a video file to continue.");
+    if (!media.type.startsWith("video/") && !media.type.startsWith("audio/")) {
+      errorEl.textContent = "Please upload a valid audio or video file.";
+      setStatus("Choose an audio or video file to continue.");
       return;
     }
 
