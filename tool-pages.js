@@ -1,6 +1,7 @@
 ﻿const vaspForm = document.querySelector("#vaspForm");
 const rubereyeForm = document.querySelector("#rubereyeForm");
 const VASP_API_BASE = "https://vasp-api-production.up.railway.app";
+const VASP_ACTIVE_GENERATION_KEY = "vasp_active_generation_job";
 
 if (vaspForm) {
   const statusEl = document.querySelector("#vaspStatus");
@@ -236,6 +237,33 @@ if (vaspForm) {
     setStatus("Generation complete.");
   }
 
+  function saveActiveGenerationJob(generationJobId) {
+    localStorage.setItem(
+      VASP_ACTIVE_GENERATION_KEY,
+      JSON.stringify({
+        generation_job_id: generationJobId,
+        saved_at: Date.now(),
+      })
+    );
+  }
+
+  function clearActiveGenerationJob() {
+    localStorage.removeItem(VASP_ACTIVE_GENERATION_KEY);
+  }
+
+  function loadActiveGenerationJob() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(VASP_ACTIVE_GENERATION_KEY) || "null");
+      if (!saved?.generation_job_id) {
+        return null;
+      }
+      return saved.generation_job_id;
+    } catch (error) {
+      clearActiveGenerationJob();
+      return null;
+    }
+  }
+
   async function pollGenerationJob(generationJobId) {
     let checks = 0;
     let missedPolls = 0;
@@ -257,10 +285,12 @@ if (vaspForm) {
         missedPolls = 0;
 
         if (data.status === "ok") {
+          clearActiveGenerationJob();
           return data;
         }
 
         if (data.status === "error") {
+          clearActiveGenerationJob();
           return data;
         }
 
@@ -284,6 +314,41 @@ if (vaspForm) {
   addMediaRowButton.addEventListener("click", createSupportingMediaRow);
   editedTranscriptEl.addEventListener("input", updateTranscriptCounts);
   createSupportingMediaRow();
+
+  async function resumeActiveGenerationJob() {
+    const activeGenerationJobId = loadActiveGenerationJob();
+    if (!activeGenerationJobId) {
+      return;
+    }
+
+    button.disabled = true;
+    startStageUpdates();
+    setStatus("Reconnected to a VASP generation job. Checking Railway for progress.", true);
+
+    try {
+      const data = await pollGenerationJob(activeGenerationJobId);
+      if (data.status === "error") {
+        errorEl.textContent = getBackendMessage(data, "The VASP backend reported an error.");
+        setStatus("Generation failed.");
+        return;
+      }
+      if (data.status !== "ok" || !data.video_url) {
+        errorEl.textContent = "VASP finished, but no generated video URL was returned.";
+        setStatus("Generation response was incomplete.");
+        return;
+      }
+      renderGenerationResult(data);
+    } catch (error) {
+      errorEl.textContent = `Could not reconnect to the VASP job yet. Reload this page to retry. ${error.message}`;
+      setStatus("Generation status unavailable.");
+    } finally {
+      stopStageUpdates();
+      button.disabled = false;
+      statusEl.classList.remove("loading");
+    }
+  }
+
+  resumeActiveGenerationJob();
 
   vaspForm.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -445,22 +510,26 @@ if (vaspForm) {
       }
 
       if (data.status === "running" && data.generation_job_id) {
+        saveActiveGenerationJob(data.generation_job_id);
         setStatus("Generation started on Railway. Waiting for the final video.", true);
         data = await pollGenerationJob(data.generation_job_id);
       }
 
       if (data.status === "error") {
+        clearActiveGenerationJob();
         errorEl.textContent = getBackendMessage(data, "The VASP backend reported an error.");
         setStatus("Generation failed.");
         return;
       }
 
       if (data.status !== "ok" || !data.video_url) {
+        clearActiveGenerationJob();
         errorEl.textContent = "VASP finished, but no generated video URL was returned.";
         setStatus("Generation response was incomplete.");
         return;
       }
 
+      clearActiveGenerationJob();
       renderGenerationResult(data);
     } catch (error) {
       errorEl.textContent = `Could not reach the VASP API. Check Railway status and CORS settings. ${error.message}`;
