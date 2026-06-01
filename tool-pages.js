@@ -158,7 +158,7 @@ if (vaspForm) {
     const fileInput = document.createElement("input");
     fileInput.className = "vasp-extra-media-file";
     fileInput.type = "file";
-    fileInput.accept = "image/*,video/*,audio/*";
+    fileInput.accept = "image/*,video/*,audio/*,.mp3,.m4a,.wav,.aac,.ogg,.flac";
     fileLabel.appendChild(fileInput);
 
     const aboutLabel = document.createElement("label");
@@ -176,7 +176,7 @@ if (vaspForm) {
     const aimInput = document.createElement("input");
     aimInput.className = "vasp-extra-media-aim";
     aimInput.type = "text";
-    aimInput.placeholder = "Example: use as visual support during intro";
+    aimInput.placeholder = "Optional; defaults to Use with relevant caption";
     aimLabel.appendChild(aimInput);
 
     const removeButton = document.createElement("button");
@@ -221,11 +221,13 @@ if (vaspForm) {
     event.preventDefault();
 
     const media = document.querySelector("#vaspMedia").files[0];
+    const language = document.querySelector("#vaspLanguage").value;
     const instruction = document.querySelector("#vaspInstruction").value.trim();
     const editName = document.querySelector("#vaspEditNameInput").value.trim();
     const creativity = document.querySelector("#vaspCreativity").value;
     const mediaCollectionMode = document.querySelector("#vaspMediaCollectionMode").value;
     const optionalMediaCount = document.querySelector("#vaspOptionalMediaCount").value;
+    const optionalMediaType = document.querySelector("#vaspOptionalMediaType").value;
     const usePresetBackgrounds = document.querySelector("#vaspUsePresetBackgrounds").checked;
     const renderCaptions = document.querySelector("#vaspRenderCaptions").checked;
     const dynamicPrompts = document.querySelector("#vaspDynamicPrompts").checked;
@@ -262,13 +264,13 @@ if (vaspForm) {
         continue;
       }
 
-      if (!file || !about || !aim) {
-        errorEl.textContent = "Each supporting media row needs a file, about value, and aim value.";
+      if (!file || !about) {
+        errorEl.textContent = "Each supporting media row needs a file and about value.";
         setStatus("Complete supporting media details before generating.");
         return;
       }
 
-      supportingMedia.push({ file, about, aim });
+      supportingMedia.push({ file, about, aim: aim || "Use with relevant caption" });
     }
 
     const creativityValue = Number.parseInt(creativity, 10);
@@ -306,12 +308,16 @@ if (vaspForm) {
       payload.append("edited_transcript", editedTranscript);
     } else {
       payload.append("video", media);
+      if (language) {
+        payload.append("language", language);
+      }
     }
     payload.append("instruction", instruction);
     payload.append("edit_name", editName);
     payload.append("creativity", String(creativityValue));
     payload.append("media_collection_mode", mediaCollectionMode);
     payload.append("optional_media_count", String(optionalMediaCountValue));
+    payload.append("optional_media_type", optionalMediaType);
     payload.append("use_preset_backgrounds", String(usePresetBackgrounds));
     payload.append("render_captions", String(renderCaptions));
     payload.append("dynamic_prompts", String(dynamicPrompts));

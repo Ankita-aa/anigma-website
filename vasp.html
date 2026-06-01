@@ -26,7 +26,30 @@
 
       <form id="vaspForm">
         <label class="vasp-label" for="vaspMedia">Main track</label>
-        <input id="vaspMedia" name="video" type="file" accept="video/*,audio/*" required />
+        <input id="vaspMedia" name="video" type="file" accept="video/*,audio/*,.mp3,.m4a,.wav,.aac,.ogg,.flac" required />
+
+        <label class="vasp-label" for="vaspLanguage">Main track language</label>
+        <select id="vaspLanguage" name="language">
+          <option value="" selected>Auto-detect</option>
+          <option value="en">English</option>
+          <option value="hi">Hindi</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <option value="de">German</option>
+          <option value="it">Italian</option>
+          <option value="pt">Portuguese</option>
+          <option value="bn">Bengali</option>
+          <option value="ta">Tamil</option>
+          <option value="te">Telugu</option>
+          <option value="mr">Marathi</option>
+          <option value="gu">Gujarati</option>
+          <option value="pa">Punjabi</option>
+          <option value="ur">Urdu</option>
+          <option value="ar">Arabic</option>
+          <option value="ja">Japanese</option>
+          <option value="ko">Korean</option>
+          <option value="zh">Chinese</option>
+        </select>
 
         <label class="vasp-label" for="vaspInstruction">Instruction</label>
         <textarea id="vaspInstruction" rows="6" placeholder="Create a clean engaging short-form video with synced captions." required></textarea>
@@ -35,7 +58,7 @@
           <div class="vasp-supporting-header">
             <div>
               <h2>Supporting media</h2>
-              <p>Add extra media with the exact about and aim values VASP should use.</p>
+              <p>Add extra media with about details. Aim is optional.</p>
             </div>
             <button id="vaspAddMediaRow" class="vasp-small-button" type="button">Add media</button>
           </div>
@@ -76,6 +99,13 @@
 
           <label class="vasp-label" for="vaspOptionalMediaCount">Optional media count</label>
           <input id="vaspOptionalMediaCount" name="optional_media_count" type="number" min="5" max="50" step="1" value="10" />
+
+          <label class="vasp-label" for="vaspOptionalMediaType">Optional media type</label>
+          <select id="vaspOptionalMediaType" name="optional_media_type">
+            <option value="all" selected>Images and GIFs</option>
+            <option value="image">Images only</option>
+            <option value="gif">GIFs only</option>
+          </select>
 
           <div class="vasp-toggle-grid" aria-label="Advanced toggles">
             <label class="vasp-toggle">
