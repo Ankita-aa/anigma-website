@@ -213,6 +213,74 @@ if (vaspForm) {
     ];
   }
 
+  function sleep(ms) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+  }
+
+  function renderGenerationResult(data) {
+    resultVideo.src = data.video_url;
+    resultVideo.style.display = "block";
+    downloadLink.href = data.video_url;
+    downloadLink.textContent = "Open or download generated video";
+    transcriptEl.textContent = data.transcript || "No transcript was returned.";
+    editNameEl.textContent = data.edit_name || "";
+    runDirEl.textContent = formatDiagnostic(data.run_dir);
+    interJsonEl.textContent = formatDiagnostic(data.inter_json);
+    plannerOutputEl.textContent = formatDiagnostic(data.planner_output);
+    generationOptionsEl.textContent = formatDiagnostic(data.generation_options);
+    supportingMediaRowsEl.textContent = formatDiagnostic(data.supporting_media);
+    renderFileGroup(plannerFilesEl, getPlannerFiles(data));
+    renderFileGroup(refinerFilesEl, getRefinerFiles(data));
+    setStatus("Generation complete.");
+  }
+
+  async function pollGenerationJob(generationJobId) {
+    let checks = 0;
+    let missedPolls = 0;
+
+    while (true) {
+      await sleep(10000);
+      checks += 1;
+
+      try {
+        const response = await fetch(`${VASP_API_BASE}/jobs/${encodeURIComponent(generationJobId)}`, {
+          cache: "no-store",
+        });
+        const data = await readResponseBody(response);
+
+        if (!response.ok) {
+          throw new Error(getBackendMessage(data, `Job polling failed with HTTP ${response.status}.`));
+        }
+
+        missedPolls = 0;
+
+        if (data.status === "ok") {
+          return data;
+        }
+
+        if (data.status === "error") {
+          return data;
+        }
+
+        setStatus(
+          `${getBackendMessage(data, "VASP is still generating your video.")} Checked ${checks} time${checks === 1 ? "" : "s"}.`,
+          true
+        );
+      } catch (error) {
+        missedPolls += 1;
+        if (missedPolls >= 12) {
+          throw error;
+        }
+        setStatus(
+          `VASP is still running, but the browser missed a status check. Retrying ${missedPolls}/12.`,
+          true
+        );
+      }
+    }
+  }
+
   addMediaRowButton.addEventListener("click", createSupportingMediaRow);
   editedTranscriptEl.addEventListener("input", updateTranscriptCounts);
   createSupportingMediaRow();
@@ -306,6 +374,7 @@ if (vaspForm) {
       }
       payload.append("job_id", preparedJob.job_id);
       payload.append("edited_transcript", editedTranscript);
+      payload.append("async_job", "true");
     } else {
       payload.append("video", media);
       if (language) {
@@ -344,7 +413,7 @@ if (vaspForm) {
         body: payload,
       });
 
-      const data = await readResponseBody(response);
+      let data = await readResponseBody(response);
 
       if (!response.ok) {
         errorEl.textContent = getBackendMessage(
@@ -375,26 +444,24 @@ if (vaspForm) {
         return;
       }
 
+      if (data.status === "running" && data.generation_job_id) {
+        setStatus("Generation started on Railway. Waiting for the final video.", true);
+        data = await pollGenerationJob(data.generation_job_id);
+      }
+
+      if (data.status === "error") {
+        errorEl.textContent = getBackendMessage(data, "The VASP backend reported an error.");
+        setStatus("Generation failed.");
+        return;
+      }
+
       if (data.status !== "ok" || !data.video_url) {
         errorEl.textContent = "VASP finished, but no generated video URL was returned.";
         setStatus("Generation response was incomplete.");
         return;
       }
 
-      resultVideo.src = data.video_url;
-      resultVideo.style.display = "block";
-      downloadLink.href = data.video_url;
-      downloadLink.textContent = "Open or download generated video";
-      transcriptEl.textContent = data.transcript || "No transcript was returned.";
-      editNameEl.textContent = data.edit_name || "";
-      runDirEl.textContent = formatDiagnostic(data.run_dir);
-      interJsonEl.textContent = formatDiagnostic(data.inter_json);
-      plannerOutputEl.textContent = formatDiagnostic(data.planner_output);
-      generationOptionsEl.textContent = formatDiagnostic(data.generation_options);
-      supportingMediaRowsEl.textContent = formatDiagnostic(data.supporting_media);
-      renderFileGroup(plannerFilesEl, getPlannerFiles(data));
-      renderFileGroup(refinerFilesEl, getRefinerFiles(data));
-      setStatus("Generation complete.");
+      renderGenerationResult(data);
     } catch (error) {
       errorEl.textContent = `Could not reach the VASP API. Check Railway status and CORS settings. ${error.message}`;
       setStatus("Generation failed.");
