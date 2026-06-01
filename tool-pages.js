@@ -18,6 +18,10 @@ if (vaspForm) {
   const refinerFilesEl = document.querySelector("#vaspRefinerFiles");
   const supportingMediaList = document.querySelector("#vaspSupportingMediaList");
   const addMediaRowButton = document.querySelector("#vaspAddMediaRow");
+  const transcriptEditor = document.querySelector("#vaspTranscriptEditor");
+  const editedTranscriptEl = document.querySelector("#vaspEditedTranscript");
+  const originalWordCountEl = document.querySelector("#vaspOriginalWordCount");
+  const editedWordCountEl = document.querySelector("#vaspEditedWordCount");
   const button = document.querySelector("#vaspSubmit");
   const stageMessages = [
     "Uploading main track to VASP.",
@@ -30,6 +34,8 @@ if (vaspForm) {
     "Uploading the generated video for playback.",
   ];
   let stageTimer;
+  let preparedJob = null;
+  let originalTranscript = "";
 
   function setStatus(text, loading = false) {
     statusEl.textContent = text;
@@ -66,6 +72,15 @@ if (vaspForm) {
     supportingMediaRowsEl.textContent = "Not available yet.";
     plannerFilesEl.textContent = "Not available yet.";
     refinerFilesEl.textContent = "Not available yet.";
+  }
+
+  function wordCount(text) {
+    return (text.trim().match(/\S+/g) || []).length;
+  }
+
+  function updateTranscriptCounts() {
+    originalWordCountEl.textContent = `Original words: ${wordCount(originalTranscript)}`;
+    editedWordCountEl.textContent = `Edited words: ${wordCount(editedTranscriptEl.value)}`;
   }
 
   async function readResponseBody(response) {
@@ -199,13 +214,14 @@ if (vaspForm) {
   }
 
   addMediaRowButton.addEventListener("click", createSupportingMediaRow);
+  editedTranscriptEl.addEventListener("input", updateTranscriptCounts);
   createSupportingMediaRow();
 
   vaspForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    const instruction = document.querySelector("#vaspInstruction").value.trim();
     const media = document.querySelector("#vaspMedia").files[0];
+    const instruction = document.querySelector("#vaspInstruction").value.trim();
     const editName = document.querySelector("#vaspEditNameInput").value.trim();
     const creativity = document.querySelector("#vaspCreativity").value;
     const mediaCollectionMode = document.querySelector("#vaspMediaCollectionMode").value;
@@ -218,13 +234,13 @@ if (vaspForm) {
 
     resetResult();
 
-    if (!media) {
+    if (!preparedJob && !media) {
       errorEl.textContent = "Please select a main audio or video track.";
       setStatus("Add a main track before generating.");
       return;
     }
 
-    if (!media.type.startsWith("video/") && !media.type.startsWith("audio/")) {
+    if (!preparedJob && !media.type.startsWith("video/") && !media.type.startsWith("audio/")) {
       errorEl.textContent = "Please upload a valid audio or video file.";
       setStatus("Choose an audio or video file to continue.");
       return;
@@ -274,7 +290,23 @@ if (vaspForm) {
     }
 
     const payload = new FormData();
-    payload.append("video", media);
+    if (preparedJob) {
+      const editedTranscript = editedTranscriptEl.value.trim();
+      if (!editedTranscript) {
+        errorEl.textContent = "Transcript cannot be empty.";
+        setStatus("Review the transcript before generating.");
+        return;
+      }
+      if (wordCount(editedTranscript) !== wordCount(originalTranscript)) {
+        errorEl.textContent = "Edited transcript must keep the same word count as the original.";
+        setStatus("Replace words only; do not add or remove words.");
+        return;
+      }
+      payload.append("job_id", preparedJob.job_id);
+      payload.append("edited_transcript", editedTranscript);
+    } else {
+      payload.append("video", media);
+    }
     payload.append("instruction", instruction);
     payload.append("edit_name", editName);
     payload.append("creativity", String(creativityValue));
@@ -285,17 +317,23 @@ if (vaspForm) {
     payload.append("dynamic_prompts", String(dynamicPrompts));
     payload.append("aim_refinement", String(aimRefinement));
     payload.append("refine_crawl_media_aims", String(refineCrawlMediaAims));
-    supportingMedia.forEach((item) => {
-      payload.append("media_files", item.file);
-      payload.append("media_about", item.about);
-      payload.append("media_aim", item.aim);
-    });
+    if (!preparedJob) {
+      supportingMedia.forEach((item) => {
+        payload.append("media_files", item.file);
+        payload.append("media_about", item.about);
+        payload.append("media_aim", item.aim);
+      });
+    }
 
     button.disabled = true;
-    startStageUpdates();
+    if (preparedJob) {
+      startStageUpdates();
+    } else {
+      setStatus("Uploading main track and preparing transcript.", true);
+    }
 
     try {
-      const response = await fetch(`${VASP_API_BASE}/generate`, {
+      const response = await fetch(`${VASP_API_BASE}/${preparedJob ? "generate" : "prepare"}`, {
         method: "POST",
         body: payload,
       });
@@ -314,6 +352,20 @@ if (vaspForm) {
       if (data.status === "error") {
         errorEl.textContent = getBackendMessage(data, "The VASP backend reported an error.");
         setStatus("Generation failed.");
+        return;
+      }
+
+      if (!preparedJob) {
+        preparedJob = data;
+        originalTranscript = data.transcript || "";
+        editedTranscriptEl.value = originalTranscript;
+        transcriptEditor.classList.remove("hidden");
+        transcriptEl.textContent = originalTranscript || "No transcript was returned.";
+        editNameEl.textContent = data.edit_name || "";
+        supportingMediaRowsEl.textContent = formatDiagnostic(data.supporting_media);
+        updateTranscriptCounts();
+        button.textContent = "Generate with reviewed transcript";
+        setStatus("Transcript ready. Review it, then generate.");
         return;
       }
 

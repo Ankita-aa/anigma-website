@@ -42,6 +42,16 @@
           <div id="vaspSupportingMediaList" class="vasp-supporting-list"></div>
         </section>
 
+        <section id="vaspTranscriptEditor" class="vasp-transcript-editor hidden">
+          <h2>Review transcript</h2>
+          <p>Correct spelling or replace words only. Do not add or remove words, so caption timing remains aligned.</p>
+          <textarea id="vaspEditedTranscript" rows="7"></textarea>
+          <div class="vasp-word-counts">
+            <span id="vaspOriginalWordCount">Original words: 0</span>
+            <span id="vaspEditedWordCount">Edited words: 0</span>
+          </div>
+        </section>
+
         <details class="vasp-advanced">
           <summary>Advanced settings</summary>
 
@@ -95,7 +105,7 @@
           </div>
         </details>
 
-        <button id="vaspSubmit" type="submit">Generate</button>
+        <button id="vaspSubmit" type="submit">Prepare transcript</button>
       </form>
 
       <div id="vaspStatus" class="vasp-status" aria-live="polite">Ready to generate.</div>
