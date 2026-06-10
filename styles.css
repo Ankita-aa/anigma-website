@@ -484,61 +484,180 @@ a.slide:hover h2 {
   padding: 24px 6vw 44px;
   display: grid;
   grid-template-columns: minmax(300px, 0.9fr) minmax(340px, 1.1fr);
-  gap: 14px;
+  gap: 24px;
   align-items: start;
+  background:
+    radial-gradient(circle at 15% 25%, rgba(54, 69, 79, 0.25), transparent 35%),
+    radial-gradient(circle at 85% 75%, rgba(255, 253, 54, 0.12), transparent 40%),
+    linear-gradient(135deg, #36454f 0%, #2a3740 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.vasp-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(135deg, #36454f 60%, #000000 100%);
+}
+
+.vasp-pattern {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(255, 253, 54, 0.03) 0%, transparent 15%);
+  animation: pulse 20s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.vasp-header {
+  background: rgba(54, 69, 79, 0.85);
+  border-bottom: 1px solid rgba(255, 253, 54, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.vasp-login {
+  background: #fffd36;
+  border-color: #fffd36 !important;
+  color: #000000 !important;
 }
 
 .vasp-card {
-  padding: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.06);
-  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.22);
+  padding: 28px;
+  border: 1px solid rgba(255, 253, 54, 0.2);
+  border-radius: 16px;
+  background: linear-gradient(145deg, #36454f 60%, #2a3740 100%);
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(0, 0, 0, 0.2) inset,
+    0 1px 0 rgba(255, 255, 255, 0.08) inset;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  border-image: linear-gradient(45deg, transparent, #fffd36, transparent) 1;
+}
+
+.vasp-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 32px 80px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 253, 54, 0.2) inset,
+    0 1px 0 rgba(255, 255, 255, 0.12) inset;
+  border-color: #fffd36;
+  border-image: linear-gradient(45deg, #fffd36, transparent, #fffd36) 1;
+}
+
+.vasp-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #fffd36, transparent);
+  border-radius: 16px 16px 0 0;
+}
+
+.vasp-generate-card {
+  background: linear-gradient(145deg, #36454f 60%, #1a1f25 100%);
+  border: 2px solid rgba(255, 253, 54, 0.3);
+  border-image: linear-gradient(45deg, transparent, #fffd36, transparent) 1;
+}
+
+.vasp-generate-card::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #fffd36, transparent);
+  border-radius: 14px;
 }
 
 .vasp-generate-card h1 {
   margin-bottom: 8px;
   font-size: 30px;
+  color: #fffd36;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .vasp-sub {
   margin-bottom: 16px;
-  color: #b9c8d8;
+  color: #cbd5e1;
   font-size: 14px;
   line-height: 1.45;
 }
 
 .vasp-label {
-  display: block;
-  margin: 10px 0 6px;
-  color: #dbeafe;
-  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 6px;
+  color: #fffd36;
+  font-size: 13px;
   font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-#vaspForm input,
-#vaspForm textarea,
-#vaspForm select,
-#vaspForm button {
+.vasp-label .label-icon {
+  font-size: 16px;
+  opacity: 0.8;
+}
+
+.vasp-input-group {
+  margin-bottom: 16px;
+}
+
+.vasp-input,
+.vasp-select,
+.vasp-textarea {
   width: 100%;
-}
-
-#vaspForm input,
-#vaspForm textarea,
-#vaspForm select {
-  min-height: 40px;
-  padding: 9px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 8px;
-  background: #071015;
-  color: #ffffff;
+  min-height: 44px;
+  padding: 12px 16px;
+  border: 1px solid rgba(255, 253, 54, 0.25);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  color: #eef7f8;
   font: inherit;
   font-size: 14px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-#vaspForm textarea {
-  min-height: 108px;
+.vasp-input:focus,
+.vasp-select:focus,
+.vasp-textarea:focus {
+  outline: none;
+  border-color: #fffd36;
+  background: rgba(0, 0, 0, 0.6);
+  box-shadow:
+    0 0 0 3px rgba(255, 253, 54, 0.15),
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.vasp-textarea {
+  min-height: 120px;
   resize: vertical;
+  line-height: 1.6;
+}
+
+.vasp-file-input {
+  padding: 16px;
+  cursor: pointer;
+}
+
+.file-hint {
+  display: block;
+  margin-top: 6px;
+  color: #8899a6;
+  font-size: 12px;
 }
 
 .vasp-advanced {
@@ -693,21 +812,23 @@ a.slide:hover h2 {
 .vasp-status {
   margin-top: 10px;
   min-height: 22px;
-  color: #cbd5e1;
+  color: #fffd36;
   font-size: 12px;
   line-height: 1.45;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .vasp-status.loading::before {
   content: "";
   display: inline-block;
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   margin-right: 8px;
-  border: 2px solid rgba(255, 255, 255, 0.24);
-  border-top-color: #2dd4bf;
+  border: 2px solid rgba(255, 253, 54, 0.5);
+  border-top-color: transparent;
+  border-right-color: #fffd36;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: spin 1s linear infinite;
   vertical-align: -2px;
 }
 

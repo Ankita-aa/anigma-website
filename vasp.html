@@ -3,56 +3,78 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#36454f" />
   <title>VASP Generate | Anigma</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="site-header">
+  <header class="site-header vasp-header">
     <a class="brand" href="index.html" aria-label="Anigma home">
       <img src="anigma_logo.jpg" alt="Anigma logo" />
     </a>
 
     <nav class="nav-links" aria-label="Main navigation">
       <a href="index.html#products">Products</a>
-      <a class="login-link" href="index.html#login">Login</a>
+      <a class="login-link vasp-login" href="index.html#login">Login</a>
     </nav>
   </header>
 
+  <div class="vasp-background">
+    <div class="vasp-pattern"></div>
+  </div>
+
   <main class="vasp-page">
     <section class="vasp-card vasp-generate-card">
-      <p class="eyebrow">VASP</p>
-      <h1>Generate Video</h1>
+      <div class="vasp-card-glow"></div>
+      <p class="eyebrow vasp-eyebrow">Video AI Studio Pro</p>
+      <h1 class="vasp-title">Generate Video</h1>
       <p class="vasp-sub">Upload a main track, add direction, and optionally attach supporting media cues.</p>
 
-      <form id="vaspForm">
-        <label class="vasp-label" for="vaspMedia">Main track</label>
-        <input id="vaspMedia" name="video" type="file" accept="video/*,audio/*,.mp3,.m4a,.wav,.aac,.ogg,.flac" required />
+      <form id="vaspForm" class="vasp-form">
+        <div class="vasp-input-group">
+          <label class="vasp-label" for="vaspMedia">
+            <span class="label-icon">🎵</span>
+            Main track
+          </label>
+          <input id="vaspMedia" name="video" type="file" accept="video/*,audio/*,.mp3,.m4a,.wav,.aac,.ogg,.flac" required class="vasp-input vasp-file-input" />
+          <span class="file-hint">MP3, WAV, MP4, MOV supported</span>
+        </div>
 
-        <label class="vasp-label" for="vaspLanguage">Main track language</label>
-        <select id="vaspLanguage" name="language">
-          <option value="" selected>Auto-detect</option>
-          <option value="en">English</option>
-          <option value="hi">Hindi</option>
-          <option value="es">Spanish</option>
-          <option value="fr">French</option>
-          <option value="de">German</option>
-          <option value="it">Italian</option>
-          <option value="pt">Portuguese</option>
-          <option value="bn">Bengali</option>
-          <option value="ta">Tamil</option>
-          <option value="te">Telugu</option>
-          <option value="mr">Marathi</option>
-          <option value="gu">Gujarati</option>
-          <option value="pa">Punjabi</option>
-          <option value="ur">Urdu</option>
-          <option value="ar">Arabic</option>
-          <option value="ja">Japanese</option>
-          <option value="ko">Korean</option>
-          <option value="zh">Chinese</option>
-        </select>
+        <div class="vasp-input-group">
+          <label class="vasp-label" for="vaspLanguage">
+            <span class="label-icon">🌐</span>
+            Main track language
+          </label>
+          <select id="vaspLanguage" name="language" class="vasp-input vasp-select">
+            <option value="" selected>Auto-detect</option>
+            <option value="en">English</option>
+            <option value="hi">Hindi</option>
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+            <option value="de">German</option>
+            <option value="it">Italian</option>
+            <option value="pt">Portuguese</option>
+            <option value="bn">Bengali</option>
+            <option value="ta">Tamil</option>
+            <option value="te">Telugu</option>
+            <option value="mr">Marathi</option>
+            <option value="gu">Gujarati</option>
+            <option value="pa">Punjabi</option>
+            <option value="ur">Urdu</option>
+            <option value="ar">Arabic</option>
+            <option value="ja">Japanese</option>
+            <option value="ko">Korean</option>
+            <option value="zh">Chinese</option>
+          </select>
+        </div>
 
-        <label class="vasp-label" for="vaspInstruction">Instruction</label>
-        <textarea id="vaspInstruction" rows="6" placeholder="Create a clean engaging short-form video with synced captions." required></textarea>
+        <div class="vasp-input-group">
+          <label class="vasp-label" for="vaspInstruction">
+            <span class="label-icon">✍️</span>
+            Instruction
+          </label>
+          <textarea id="vaspInstruction" rows="6" placeholder="Create a clean engaging short-form video with synced captions." required class="vasp-input vasp-textarea"></textarea>
+        </div>
 
         <section class="vasp-supporting-media">
           <div class="vasp-supporting-header">
@@ -60,7 +82,9 @@
               <h2>Supporting media</h2>
               <p>Add extra media with about details. Aim is optional.</p>
             </div>
-            <button id="vaspAddMediaRow" class="vasp-small-button" type="button">Add media</button>
+            <button id="vaspAddMediaRow" class="vasp-small-button" type="button">
+              <span class="button-icon">+</span> Add media
+            </button>
           </div>
           <div id="vaspSupportingMediaList" class="vasp-supporting-list"></div>
         </section>
@@ -68,44 +92,57 @@
         <section id="vaspTranscriptEditor" class="vasp-transcript-editor hidden">
           <h2>Review transcript</h2>
           <p>Correct spelling or replace words only. Do not add or remove words, so caption timing remains aligned.</p>
-          <textarea id="vaspEditedTranscript" rows="7"></textarea>
+          <textarea id="vaspEditedTranscript" rows="7" class="vasp-input vasp-textarea"></textarea>
           <div class="vasp-word-counts">
-            <span id="vaspOriginalWordCount">Original words: 0</span>
-            <span id="vaspEditedWordCount">Edited words: 0</span>
+            <span id="vaspOriginalWordCount" class="word-count-badge">Original: 0 words</span>
+            <span id="vaspEditedWordCount" class="word-count-badge">Edited: 0 words</span>
           </div>
         </section>
 
         <details class="vasp-advanced">
-          <summary>Advanced settings</summary>
+          <summary>
+            <span class="summary-icon">⚙️</span>
+            Advanced settings
+          </summary>
 
-          <label class="vasp-label" for="vaspEditNameInput">Edit name</label>
-          <input id="vaspEditNameInput" name="edit_name" type="text" placeholder="Optional, auto-generated if empty" />
+          <div class="vasp-input-group">
+            <label class="vasp-label" for="vaspEditNameInput">Edit name</label>
+            <input id="vaspEditNameInput" name="edit_name" type="text" placeholder="Optional, auto-generated if empty" class="vasp-input" />
+          </div>
 
-          <label class="vasp-label" for="vaspCreativity">Creativity</label>
-          <select id="vaspCreativity" name="creativity">
-            <option value="1">1 - Minimal</option>
-            <option value="2" selected>2 - Balanced</option>
-            <option value="3">3 - Expressive</option>
-            <option value="4">4 - Bold</option>
-            <option value="5">5 - Experimental</option>
-          </select>
+          <div class="vasp-input-group">
+            <label class="vasp-label" for="vaspCreativity">Creativity</label>
+            <select id="vaspCreativity" name="creativity" class="vasp-input vasp-select">
+              <option value="1">1 - Minimal</option>
+              <option value="2" selected>2 - Balanced</option>
+              <option value="3">3 - Expressive</option>
+              <option value="4">4 - Bold</option>
+              <option value="5">5 - Experimental</option>
+            </select>
+          </div>
 
-          <label class="vasp-label" for="vaspMediaCollectionMode">Media collection</label>
-          <select id="vaspMediaCollectionMode" name="media_collection_mode">
-            <option value="none" selected>None</option>
-            <option value="library">Library</option>
-            <option value="crawl">Crawl</option>
-          </select>
+          <div class="vasp-input-group">
+            <label class="vasp-label" for="vaspMediaCollectionMode">Media collection</label>
+            <select id="vaspMediaCollectionMode" name="media_collection_mode" class="vasp-input vasp-select">
+              <option value="none" selected>None</option>
+              <option value="library">Library</option>
+              <option value="crawl">Crawl</option>
+            </select>
+          </div>
 
-          <label class="vasp-label" for="vaspOptionalMediaCount">Optional media count</label>
-          <input id="vaspOptionalMediaCount" name="optional_media_count" type="number" min="5" max="50" step="1" value="10" />
+          <div class="vasp-input-group">
+            <label class="vasp-label" for="vaspOptionalMediaCount">Optional media count</label>
+            <input id="vaspOptionalMediaCount" name="optional_media_count" type="number" min="5" max="50" step="1" value="10" class="vasp-input" />
+          </div>
 
-          <label class="vasp-label" for="vaspOptionalMediaType">Optional media type</label>
-          <select id="vaspOptionalMediaType" name="optional_media_type">
-            <option value="all" selected>Images and GIFs</option>
-            <option value="image">Images only</option>
-            <option value="gif">GIFs only</option>
-          </select>
+          <div class="vasp-input-group">
+            <label class="vasp-label" for="vaspOptionalMediaType">Optional media type</label>
+            <select id="vaspOptionalMediaType" name="optional_media_type" class="vasp-input vasp-select">
+              <option value="all" selected>Images and GIFs</option>
+              <option value="image">Images only</option>
+              <option value="gif">GIFs only</option>
+            </select>
+          </div>
 
           <div class="vasp-toggle-grid" aria-label="Advanced toggles">
             <label class="vasp-toggle">
@@ -135,32 +172,42 @@
           </div>
         </details>
 
-        <button id="vaspSubmit" type="submit">Prepare transcript</button>
+        <button id="vaspSubmit" type="submit" class="vasp-submit-button">
+          <span class="button-text">Prepare transcript</span>
+          <span class="button-icon">🚀</span>
+        </button>
       </form>
 
       <div id="vaspStatus" class="vasp-status" aria-live="polite">Ready to generate.</div>
     </section>
 
     <section class="vasp-card vasp-result-card">
+      <div class="vasp-card-glow result-glow"></div>
       <div class="vasp-result-header">
         <div>
-          <p class="eyebrow">Result</p>
+          <p class="eyebrow vasp-eyebrow">Result</p>
           <h2>Generated Output</h2>
         </div>
         <span id="vaspEditName" class="vasp-edit-name"></span>
       </div>
 
       <div id="vaspError" class="vasp-error"></div>
-      <video id="vaspVideo" controls playsinline></video>
+      <video id="vaspVideo" controls playsinline class="vasp-video-player"></video>
       <a id="vaspDownloadLink" class="vasp-download-link" href="#" target="_blank" rel="noopener noreferrer"></a>
 
       <details id="vaspTranscriptWrap" class="vasp-transcript" open>
-        <summary>Transcript</summary>
+        <summary>
+          <span class="summary-icon">📄</span>
+          Transcript
+        </summary>
         <p id="vaspTranscript">Generated transcript will appear here.</p>
       </details>
 
       <details id="vaspDiagnosticsWrap" class="vasp-diagnostics">
-        <summary>Diagnostics</summary>
+        <summary>
+          <span class="summary-icon">🔧</span>
+          Diagnostics
+        </summary>
         <dl>
           <dt>Run directory</dt>
           <dd id="vaspRunDir">Not available yet.</dd>
